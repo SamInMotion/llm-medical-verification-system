@@ -1,3 +1,34 @@
+"""
+ICD-10-CM code lookup using CMS flat files.
+Falls back to a small embedded dictionary if the full file is missing.
+"""
+
+import os
+
+FALLBACK_CODES = {
+    "E11.9": "Type 2 diabetes mellitus without complications",
+    "E11.65": "Type 2 diabetes mellitus with hyperglycemia",
+    "E10.9": "Type 1 diabetes mellitus without complications",
+    "I10": "Essential (primary) hypertension",
+    "I25.10": "Atherosclerotic heart disease of native coronary artery without angina pectoris",
+    "J18.9": "Pneumonia, unspecified organism",
+    "A41.9": "Sepsis, unspecified organism",
+    "C34.90": "Malignant neoplasm of unspecified part of unspecified bronchus or lung",
+    "G30.9": "Alzheimer disease, unspecified",
+    "G31.9": "Degenerative disease of nervous system, unspecified",
+    "F32.9": "Major depressive disorder, single episode, unspecified",
+    "J44.1": "Chronic obstructive pulmonary disease with acute exacerbation",
+    "N18.6": "End stage renal disease",
+    "M54.5": "Low back pain",
+    "K21.0": "Gastro-esophageal reflux disease with esophagitis",
+    "U07.1": "COVID-19",
+    "R05.9": "Cough, unspecified",
+    "Z87.39": "Personal history of other diseases of the musculoskeletal system and connective tissue",
+    "I48.91": "Unspecified atrial fibrillation",
+    "E78.5": "Hyperlipidemia, unspecified",
+}
+
+
 class ICDLookup:
     def __init__(self, data_dir="data"):
         self.codes = {}
