@@ -1,3 +1,15 @@
+
+---
+title: MedTermCheck
+emoji: 🔬
+colorFrom: blue
+colorTo: green
+sdk: gradio
+sdk_version: "4.0.0"
+app_file: app.py
+pinned: false
+---
+
 # MedTermCheck
 
 Verifies medical entities extracted by LLMs against clinical ontologies (SNOMED-CT and ICD-10). Checks whether extracted codes exist, whether descriptions match, and assigns a confidence score based on four independent verification signals.
