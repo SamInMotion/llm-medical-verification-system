@@ -63,9 +63,9 @@ Each entity receives a score between 0.0 and 1.0 based on four weighted signals:
 
 Status labels:
 - **Grounded**: Both ICD-10 and SNOMED-CT confirm the entity
-- **Partial**: One ontology confirms, or parent code match
-- **Ungrounded**: Neither ontology confirms the extraction
-
+- **Partial**: One ontology source confirms, or the system found a parent code match but not the exact code
+- **Ungrounded**: Neither ontology confirms
+  
 ## Setup
 
 ### Run locally
@@ -125,7 +125,7 @@ This is a research demo, not a clinical decision tool. The evaluation set is sma
 
 ## Background
 
-Built by Samuel Okoe-Mensah. The ontology verification approach extends work from my MPhil thesis at the University of Bergen on ontology-enriched machine learning for medical text classification, where I found that structured knowledge from SNOMED-CT changed which features the classifier relied on, even when it did not improve overall accuracy.
+Built by Samuel Okoe-Mensah. The ontology verification approach extends work from my MPhil thesis at the University of Bergen on ontology-enriched machine learning for medical text classification. That work showed structured knowledge from SNOMED-CT changed which features the classifier relied on, even when it did not improve overall accuracy.
 
 - [Live Demo](https://huggingface.co/spaces/SamInMotion/medtermcheck)
 - [LinkedIn](https://www.linkedin.com/in/sammens/)
