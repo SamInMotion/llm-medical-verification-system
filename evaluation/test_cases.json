@@ -1,0 +1,240 @@
+[
+  {
+    "id": "tc01",
+    "category": "standard",
+    "text": "Patient diagnosed with type 2 diabetes mellitus without complications.",
+    "expected_entities": [
+      {
+        "text_mention": "type 2 diabetes mellitus",
+        "icd10_code": "E11.9",
+        "snomed_concept_id": "44054006"
+      }
+    ],
+    "notes": "Baseline test. Both ontologies should confirm."
+  },
+  {
+    "id": "tc02",
+    "category": "standard",
+    "text": "Essential hypertension noted during routine examination. Blood pressure 160/95.",
+    "expected_entities": [
+      {
+        "text_mention": "essential hypertension",
+        "icd10_code": "I10",
+        "snomed_concept_id": "59621000"
+      }
+    ],
+    "notes": "Common condition. Short ICD code (3 characters)."
+  },
+  {
+    "id": "tc03",
+    "category": "standard",
+    "text": "Blood cultures confirmed sepsis caused by gram-negative bacteria. Patient transferred to ICU.",
+    "expected_entities": [
+      {
+        "text_mention": "sepsis",
+        "icd10_code": "A41.9",
+        "snomed_concept_id": "91302008"
+      }
+    ],
+    "notes": "Acute condition. Tests extraction from clinical narrative."
+  },
+  {
+    "id": "tc04",
+    "category": "standard",
+    "text": "CT scan revealed malignant neoplasm of the right upper lobe of the lung.",
+    "expected_entities": [
+      {
+        "text_mention": "malignant neoplasm",
+        "icd10_code": "C34.90"
+      }
+    ],
+    "notes": "Cancer diagnosis. Code specificity may vary."
+  },
+  {
+    "id": "tc05",
+    "category": "standard",
+    "text": "Progressive cognitive decline consistent with Alzheimer disease. MRI shows cortical atrophy.",
+    "expected_entities": [
+      {
+        "text_mention": "Alzheimer disease",
+        "icd10_code": "G30.9",
+        "snomed_concept_id": "26929004"
+      }
+    ],
+    "notes": "Neurodegenerative condition."
+  },
+  {
+    "id": "tc06",
+    "category": "standard",
+    "text": "Patient presents with major depressive disorder, single episode. PHQ-9 score of 18.",
+    "expected_entities": [
+      {
+        "text_mention": "major depressive disorder",
+        "icd10_code": "F32.9",
+        "snomed_concept_id": "370143000"
+      }
+    ],
+    "notes": "Mental health condition with clinical assessment tool mentioned."
+  },
+  {
+    "id": "tc07",
+    "category": "standard",
+    "text": "Acute exacerbation of chronic obstructive pulmonary disease requiring supplemental oxygen.",
+    "expected_entities": [
+      {
+        "text_mention": "chronic obstructive pulmonary disease",
+        "icd10_code": "J44.1",
+        "snomed_concept_id": "13645005"
+      }
+    ],
+    "notes": "COPD with exacerbation qualifier."
+  },
+  {
+    "id": "tc08",
+    "category": "norwegian",
+    "text": "Pasienten ble innlagt med mistanke om sepsis. Blodkulturer viste vekst av E. coli.",
+    "expected_entities": [
+      {
+        "text_mention": "sepsis",
+        "icd10_code": "A41.9"
+      }
+    ],
+    "notes": "Norwegian clinical text. Tests language detection and entity extraction."
+  },
+  {
+    "id": "tc09",
+    "category": "norwegian",
+    "text": "Pasienten har kjent diabetes type 2 og hypertensjon. Medisinlisten inkluderer metformin og losartan.",
+    "expected_entities": [
+      {
+        "text_mention": "diabetes type 2",
+        "icd10_code": "E11.9"
+      },
+      {
+        "text_mention": "hypertensjon",
+        "icd10_code": "I10"
+      }
+    ],
+    "notes": "Norwegian text with two conditions and medications."
+  },
+  {
+    "id": "tc10",
+    "category": "norwegian",
+    "text": "Rtg thorax viser bilaterale infiltrater forenlig med pneumoni. CRP 285.",
+    "expected_entities": [
+      {
+        "text_mention": "pneumoni",
+        "icd10_code": "J18.9"
+      }
+    ],
+    "notes": "Norwegian radiology finding."
+  },
+  {
+    "id": "tc11",
+    "category": "norwegian",
+    "text": "Kronisk nyresykdom stadium 5. Pasienten er satt opp for dialysestart.",
+    "expected_entities": [
+      {
+        "text_mention": "kronisk nyresykdom",
+        "icd10_code": "N18.6"
+      }
+    ],
+    "notes": "Norwegian end-stage renal disease."
+  },
+  {
+    "id": "tc12",
+    "category": "hallucination_trap",
+    "text": "The weather today is sunny with a high of 25 degrees. Several new restaurants opened downtown.",
+    "expected_entities": [],
+    "notes": "No medical content. System should return zero entities."
+  },
+  {
+    "id": "tc13",
+    "category": "hallucination_trap",
+    "text": "The quarterly earnings report showed strong growth in the technology sector. Stock prices rose 3%.",
+    "expected_entities": [],
+    "notes": "Financial text. Zero medical entities expected."
+  },
+  {
+    "id": "tc14",
+    "category": "hallucination_trap",
+    "text": "The patient was diagnosed with chronic floxitremia and acute bornholmitis of the left ventricle.",
+    "expected_entities": [],
+    "notes": "Invented medical conditions. System should flag these as ungrounded or not extract them."
+  },
+  {
+    "id": "tc15",
+    "category": "wrong_code",
+    "text": "Type 2 diabetes mellitus. ICD-10 code: E10.9.",
+    "expected_entities": [
+      {
+        "text_mention": "Type 2 diabetes mellitus",
+        "correct_icd10": "E11.9",
+        "wrong_icd10_in_text": "E10.9"
+      }
+    ],
+    "notes": "E10.9 is Type 1, not Type 2. Tests whether system catches code mismatch."
+  },
+  {
+    "id": "tc16",
+    "category": "wrong_code",
+    "text": "Patient has essential hypertension. Code assigned: G30.9.",
+    "expected_entities": [
+      {
+        "text_mention": "essential hypertension",
+        "correct_icd10": "I10",
+        "wrong_icd10_in_text": "G30.9"
+      }
+    ],
+    "notes": "G30.9 is Alzheimer, not hypertension. Tests code-description mismatch detection."
+  },
+  {
+    "id": "tc17",
+    "category": "rare",
+    "text": "Post-COVID condition with persistent fatigue and cognitive impairment lasting 6 months.",
+    "expected_entities": [
+      {
+        "text_mention": "Post-COVID condition",
+        "icd10_code": "U09.9"
+      }
+    ],
+    "notes": "Recent ICD code. Tests coverage of newer entries."
+  },
+  {
+    "id": "tc18",
+    "category": "rare",
+    "text": "Hereditary hemochromatosis confirmed by genetic testing. Ferritin level 1200 ng/mL.",
+    "expected_entities": [
+      {
+        "text_mention": "hereditary hemochromatosis",
+        "icd10_code": "E83.110"
+      }
+    ],
+    "notes": "Less common condition with specific code."
+  },
+  {
+    "id": "tc19",
+    "category": "ambiguous",
+    "text": "Patient reports persistent headache and dizziness for the past two weeks.",
+    "expected_entities": [
+      {
+        "text_mention": "headache"
+      },
+      {
+        "text_mention": "dizziness"
+      }
+    ],
+    "notes": "Symptoms, not diagnoses. Tests whether system assigns symptom codes (R51, R42) rather than disease codes."
+  },
+  {
+    "id": "tc20",
+    "category": "ambiguous",
+    "text": "Chest pain on exertion. No ST changes on ECG. Troponin negative.",
+    "expected_entities": [
+      {
+        "text_mention": "chest pain"
+      }
+    ],
+    "notes": "Symptom with negative workup. Tests appropriate coding of undifferentiated symptoms."
+  }
+]
