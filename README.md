@@ -12,6 +12,12 @@ pinned: false
 
 Verifies medical entities extracted by LLMs against clinical ontologies (SNOMED-CT and ICD-10). Checks whether extracted codes exist, whether descriptions match, and assigns a confidence score based on four independent verification signals.
 
+## System Overview
+
+[diagram]
+
+User Input → Extraction Service → Verification Pipeline → Scoring Engine → Report API
+
 ## The Problem
 
 LLMs regularly produce incorrect medical codes when extracting clinical information from text. A model might output "ICD-10: G31.9" for a patient with diabetes, which is actually a code for degenerative nervous system disease. Research shows ungrounded clinical LLM outputs have hallucination rates above 60%.
@@ -117,11 +123,26 @@ medtermcheck/
     benchmark.py          Accuracy measurement
   data/
     icd10cm_codes.txt     CMS flat file (download separately)
-```
 
+```
+## Example Usage
+
+from pipeline.verifier import verify_text
+
+result = verify_text("Patient diagnosed with diabetes...")
+print(result)
 ## Limitations
 
 This is a research demo, not a clinical decision tool. The evaluation set is small (20 annotated cases). Results depend on Claude API availability and SNOMED-CT API uptime. Norwegian text support is functional but less tested than English. The confidence score reflects verification evidence, not diagnostic correctness.
+
+## Evaluation
+
+- Dataset: 20 manually annotated cases (with adversarial hallucinations)
+- Metrics:
+  - Entity grounding accuracy
+  - False positive rate
+- Known limitations:
+  - Small dataset → results indicative, not generalizable
 
 ## Background
 
