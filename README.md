@@ -12,10 +12,6 @@ pinned: false
 
 Verifies medical entities extracted by LLMs against clinical ontologies (SNOMED-CT and ICD-10). Checks whether extracted codes exist, whether descriptions match, and assigns a confidence score based on four independent verification signals.
 
-## System Overview
-
-User Input → Extraction Service → Verification Pipeline → Scoring Engine → Report API
-
 ## The Problem
 
 LLMs regularly produce incorrect medical codes when extracting clinical information from text. A model might output "ICD-10: G31.9" for a patient with diabetes, which is actually a code for degenerative nervous system disease. Research shows ungrounded clinical LLM outputs have hallucination rates above 60%.
@@ -70,7 +66,7 @@ Status labels:
 - **Partial**: One ontology source confirms, or the system found a parent code match but not the exact code
 - **Ungrounded**: Neither ontology confirms
 
-  ## Design Decisions
+## Design Decisions
 
 **Why multi-signal verification instead of single ontology?**
 
@@ -91,9 +87,9 @@ Medical text contains abbreviations, misspellings, and paraphrases. Exact string
 ## Production Considerations
 
 **Failure modes:**
-- Incorrect entity extraction → mitigated via source text grounding signal
-- Ontology API downtime (SNOMED-CT Snowstorm) → fallback to cached ICD data only
-- Ambiguous medical terms → flagged as "Partial" rather than false positive
+- Incorrect entity extraction -- mitigated via source text grounding signal
+- Ontology API downtime (SNOMED-CT Snowstorm) -- fallback to cached ICD data only
+- Ambiguous medical terms -- flagged as "Partial" rather than false positive
 
 **Latency:**
 - SNOMED API calls dominate runtime (~200-500ms per entity)
@@ -107,25 +103,14 @@ Medical text contains abbreviations, misspellings, and paraphrases. Exact string
 **Extensibility:**
 - New ontologies can be added as independent modules in `ontology/`
 - Confidence weights configurable for domain-specific tuning
-```
 
----
-
-## Also: Delete this line from System Overview
-
-Remove this:
-```
-[diagram]
-
-User Input → Extraction Service → Verification Pipeline → Scoring Engine → Report API
-  
 ## Setup
 
 ### Run locally
 
 ```bash
-git clone https://github.com/SamInMotion/medtermcheck.git
-cd medtermcheck
+git clone https://github.com/SamInMotion/llm-medical-verification-system.git
+cd llm-medical-verification-system
 pip install -r requirements.txt
 ```
 
@@ -155,29 +140,31 @@ python -m evaluation.benchmark --api-key YOUR_KEY
 ## Project Structure
 
 ```
-medtermcheck/
-  app.py                  Gradio interface (HuggingFace Spaces entry point)
-  requirements.txt        Python dependencies
-  pipeline/
-    extractor.py          Claude API medical entity extraction
-    verifier.py           Pipeline orchestration
-    confidence.py         4-signal evidence scoring
-  ontology/
-    icd_lookup.py         CMS ICD-10-CM parser with fallback
-    snomed_client.py      Snowstorm API client with fallback
-  evaluation/
-    test_cases.json       20 annotated test cases
-    benchmark.py          Accuracy measurement
-  data/
-    icd10cm_codes.txt     CMS flat file (download separately)
-
+app.py                  Gradio interface (HuggingFace Spaces entry point)
+requirements.txt        Python dependencies
+pipeline/
+  extractor.py          Claude API medical entity extraction
+  verifier.py           Pipeline orchestration
+  confidence.py         4-signal evidence scoring
+ontology/
+  icd_lookup.py         CMS ICD-10-CM parser with fallback
+  snomed_client.py      Snowstorm API client with fallback
+evaluation/
+  test_cases.json       20 annotated test cases
+  benchmark.py          Accuracy measurement
+data/
+  icd10cm_codes.txt     CMS flat file (download separately)
 ```
+
 ## Example Usage
 
+```python
 from pipeline.verifier import verify_text
 
 result = verify_text("Patient diagnosed with diabetes...")
 print(result)
+```
+
 ## Limitations
 
 This is a research demo, not a clinical decision tool. The evaluation set is small (20 annotated cases). Results depend on Claude API availability and SNOMED-CT API uptime. Norwegian text support is functional but less tested than English. The confidence score reflects verification evidence, not diagnostic correctness.
@@ -185,11 +172,8 @@ This is a research demo, not a clinical decision tool. The evaluation set is sma
 ## Evaluation
 
 - Dataset: 20 manually annotated cases (with adversarial hallucinations)
-- Metrics:
-  - Entity grounding accuracy
-  - False positive rate
-- Known limitations:
-  - Small dataset → results indicative, not generalizable
+- Metrics: entity grounding accuracy, false positive rate
+- Known limitations: small dataset means results are indicative, not generalizable
 
 ## Background
 
