@@ -65,52 +65,14 @@ Status labels:
 - **Grounded**: Both ICD-10 and SNOMED-CT confirm the entity
 - **Partial**: One ontology source confirms, or the system found a parent code match but not the exact code
 - **Ungrounded**: Neither ontology confirms
-
-## Design Decisions
-
-**Why multi-signal verification instead of single ontology?**
-
-LLM extraction errors are heterogeneous. A code might exist in ICD-10 but be wrong for the context. Cross-referencing against SNOMED-CT and the source text catches errors that single-source validation misses.
-
-**Why weight LLM confidence lowest (0.10)?**
-
-The LLM is the system being audited. Its self-reported confidence correlates weakly with actual correctness in medical domains. External verification signals are more trustworthy.
-
-**Why local ICD-10 instead of API?**
-
-Speed and reliability. The CMS flat file provides ~70K codes with zero network latency. SNOMED-CT requires API calls but provides richer concept relationships.
-
-**Why fuzzy matching for source grounding?**
-
-Medical text contains abbreviations, misspellings, and paraphrases. Exact string matching produces false negatives. RapidFuzz with threshold tuning balances precision and recall.
-
-## Production Considerations
-
-**Failure modes:**
-- Incorrect entity extraction -- mitigated via source text grounding signal
-- Ontology API downtime (SNOMED-CT Snowstorm) -- fallback to cached ICD data only
-- Ambiguous medical terms -- flagged as "Partial" rather than false positive
-
-**Latency:**
-- SNOMED API calls dominate runtime (~200-500ms per entity)
-- ICD-10 lookup is local (~1ms)
-- Batch processing recommended for documents with 10+ entities
-
-**Reliability:**
-- Each verification signal computed independently to avoid single-point failure
-- System degrades gracefully: if SNOMED unavailable, ICD-10 + grounding still produce useful scores
-
-**Extensibility:**
-- New ontologies can be added as independent modules in `ontology/`
-- Confidence weights configurable for domain-specific tuning
-
+  
 ## Setup
 
 ### Run locally
 
 ```bash
-git clone https://github.com/SamInMotion/llm-medical-verification-system.git
-cd llm-medical-verification-system
+git clone https://github.com/SamInMotion/medtermcheck.git
+cd medtermcheck
 pip install -r requirements.txt
 ```
 
@@ -140,45 +102,31 @@ python -m evaluation.benchmark --api-key YOUR_KEY
 ## Project Structure
 
 ```
-app.py                  Gradio interface (HuggingFace Spaces entry point)
-requirements.txt        Python dependencies
-pipeline/
-  extractor.py          Claude API medical entity extraction
-  verifier.py           Pipeline orchestration
-  confidence.py         4-signal evidence scoring
-ontology/
-  icd_lookup.py         CMS ICD-10-CM parser with fallback
-  snomed_client.py      Snowstorm API client with fallback
-evaluation/
-  test_cases.json       20 annotated test cases
-  benchmark.py          Accuracy measurement
-data/
-  icd10cm_codes.txt     CMS flat file (download separately)
-```
-
-## Example Usage
-
-```python
-from pipeline.verifier import verify_text
-
-result = verify_text("Patient diagnosed with diabetes...")
-print(result)
+medtermcheck/
+  app.py                  Gradio interface (HuggingFace Spaces entry point)
+  requirements.txt        Python dependencies
+  pipeline/
+    extractor.py          Claude API medical entity extraction
+    verifier.py           Pipeline orchestration
+    confidence.py         4-signal evidence scoring
+  ontology/
+    icd_lookup.py         CMS ICD-10-CM parser with fallback
+    snomed_client.py      Snowstorm API client with fallback
+  evaluation/
+    test_cases.json       20 annotated test cases
+    benchmark.py          Accuracy measurement
+  data/
+    icd10cm_codes_2026.txt     CMS flat file (download separately)
 ```
 
 ## Limitations
 
 This is a research demo, not a clinical decision tool. The evaluation set is small (20 annotated cases). Results depend on Claude API availability and SNOMED-CT API uptime. Norwegian text support is functional but less tested than English. The confidence score reflects verification evidence, not diagnostic correctness.
-
-## Evaluation
-
-- Dataset: 20 manually annotated cases (with adversarial hallucinations)
-- Metrics: entity grounding accuracy, false positive rate
-- Known limitations: small dataset means results are indicative, not generalizable
-
+SNOMED-CT live API integration is currently using a small embedded fallback dictionary; full Snowstorm integration to be restored in a follow-up update.
 ## Background
 
 Built by Samuel Okoe-Mensah. The ontology verification approach extends work from my MPhil thesis at the University of Bergen on ontology-enriched machine learning for medical text classification. That work showed structured knowledge from SNOMED-CT changed which features the classifier relied on, even when it did not improve overall accuracy.
 
-- [Live Demo](https://huggingface.co/spaces/SamInMotion/medtermcheck)
+- [Live Demo](https://huggingface.co/spaces/TWhip/medtermcheck)
 - [LinkedIn](https://www.linkedin.com/in/sammens/)
 - [GitHub](https://github.com/SamInMotion)
