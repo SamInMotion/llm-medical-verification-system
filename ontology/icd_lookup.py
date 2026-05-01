@@ -88,10 +88,18 @@ class ICDLookup:
             raw_code = line[6:13].strip()
             desc = line[16:77].strip() if len(line) > 16 else ""
             long_desc = line[77:].strip() if len(line) > 77 else ""
+            # Validate that this looks like a real ICD-10 code:
+            # starts with a letter, followed by digits/letters, 3-7 chars total
+            if not raw_code or len(raw_code) < 3 or len(raw_code) > 7:
+                continue
+            if not raw_code[0].isalpha():
+                continue
+            if not raw_code[1:].replace(".", "").isalnum():
+                continue
             if raw_code and desc:
                 formatted = self._format_code(raw_code)
                 codes[formatted] = long_desc if long_desc else desc
-        if len(codes) > 1000:
+        if len(codes) > 100000:
             return codes
         return None
 
@@ -104,7 +112,7 @@ class ICDLookup:
                 desc = parts[-1].strip()
                 if raw_code and desc and len(raw_code) <= 8:
                     codes[self._format_code(raw_code)] = desc
-        if len(codes) > 100:
+        if len(codes) > 50000:
             return codes
         return None
 
@@ -120,7 +128,7 @@ class ICDLookup:
                 desc = parts[1].strip()
                 if raw_code and raw_code[0].isalpha() and len(raw_code) <= 8:
                     codes[self._format_code(raw_code)] = desc
-        if len(codes) > 100:
+        if len(codes) > 50000:
             return codes
         return None
 
